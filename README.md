@@ -2,7 +2,6 @@
 
 A modern, responsive WordPress theme built for the Vienna Gaels Gaelic Athletic Association club. Features a clean design with Tailwind CSS and custom post types for events management.
 
-![Vienna Gaels](screenshot.png)
 
 ## Features
 
