@@ -1,0 +1,25 @@
+
+/*
+Theme Name: Vienna Gaels GAA
+Theme URI: https://www.gaavienna.at/
+Author: Shane Moloney
+Author URI: https://shanemoloney.ie
+Description: Custom WordPress theme for Vienna Gaels GAA Club
+Version: 1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: vienna-gaels
+*/
+
+body {
+    font-family: 'Lexend', sans-serif;
+}
+
+.celtic-pattern {
+    background-image: radial-gradient(circle at 2px 2px, rgba(0, 128, 64, 0.05) 1px, transparent 0);
+    background-size: 24px 24px;
+}
+
+.soft-lift {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
