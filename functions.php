@@ -71,8 +71,34 @@ function vienna_gaels_custom_post_types() {
         'menu_icon' => 'dashicons-calendar-alt',
         'rewrite' => array('slug' => 'events')
     ));
+    
+    // Event Types taxonomy
+    register_taxonomy('event_type', 'events', array(
+        'labels' => array(
+            'name' => __('Event Types', 'vienna-gaels'),
+            'singular_name' => __('Event Type', 'vienna-gaels'),
+            'add_new_item' => __('Add New Event Type', 'vienna-gaels'),
+            'edit_item' => __('Edit Event Type', 'vienna-gaels'),
+            'search_items' => __('Search Event Types', 'vienna-gaels'),
+        ),
+        'hierarchical' => false,
+        'show_admin_column' => true,
+        'rewrite' => array('slug' => 'event-type')
+    ));
 }
 add_action('init', 'vienna_gaels_custom_post_types');
+
+// Add default event types on theme activation
+function vienna_gaels_add_default_event_types() {
+    $default_types = array('Training', 'Tournament', 'Social');
+    
+    foreach ($default_types as $type) {
+        if (!term_exists($type, 'event_type')) {
+            wp_insert_term($type, 'event_type');
+        }
+    }
+}
+add_action('after_switch_theme', 'vienna_gaels_add_default_event_types');
 
 function vienna_gaels_event_meta_boxes() {
     add_meta_box(
@@ -93,7 +119,6 @@ function vienna_gaels_event_details_callback($post) {
     $start_time = get_post_meta($post->ID, '_event_start_time', true);
     $end_time = get_post_meta($post->ID, '_event_end_time', true);
     $location = get_post_meta($post->ID, '_event_location', true);
-    $type = get_post_meta($post->ID, '_event_type', true);
     $spond_url = get_post_meta($post->ID, '_spond_event_url', true);
     
     echo '<p><label><strong>Start Date:</strong> <input type="date" name="event_start_date" value="' . esc_attr($start_date) . '" required /></label></p>';
@@ -106,11 +131,8 @@ function vienna_gaels_event_details_callback($post) {
     
     echo '<p><label><strong>Location:</strong> <input type="text" name="event_location" value="' . esc_attr($location) . '" style="width:100%;" /></label></p>';
     
-    echo '<p><label><strong>Type:</strong> <select name="event_type">';
-    echo '<option value="training"' . selected($type, 'training', false) . '>Training</option>';
-    echo '<option value="match"' . selected($type, 'match', false) . '>Match Day</option>';
-    echo '<option value="social"' . selected($type, 'social', false) . '>Social</option>';
-    echo '</select></label></p>';
+    echo '<p><strong>Event Type:</strong><br>';
+    echo 'Select from the "Event Types" box on the right sidebar, or <a href="' . admin_url('edit-tags.php?taxonomy=event_type&post_type=events') . '" target="_blank">manage event types here</a>.</p>';
     
     echo '<p><label><strong>Spond Event URL (optional):</strong> <input type="url" name="spond_event_url" value="' . esc_attr($spond_url) . '" style="width:100%;" placeholder="https://spond.com/..." /></label></p>';
     echo '<p class="description">If this event has a specific Spond page, paste the link here. Leave empty to show general Spond link.</p>';
@@ -137,9 +159,6 @@ function vienna_gaels_save_event_details($post_id) {
     }
     if (isset($_POST['event_location'])) {
         update_post_meta($post_id, '_event_location', sanitize_text_field($_POST['event_location']));
-    }
-    if (isset($_POST['event_type'])) {
-        update_post_meta($post_id, '_event_type', sanitize_text_field($_POST['event_type']));
     }
     if (isset($_POST['spond_event_url'])) {
         update_post_meta($post_id, '_spond_event_url', esc_url_raw($_POST['spond_event_url']));
@@ -366,4 +385,140 @@ function vienna_gaels_format_event_datetime($event_id) {
         'time' => $time_str,
         'short_date' => date('M d', strtotime($start_date))
     );
+}
+
+// Add Website Help page to admin menu
+function vienna_gaels_admin_help_menu() {
+    add_menu_page(
+        'Website Help',
+        'Website Help',
+        'edit_posts',
+        'vienna-gaels-help',
+        'vienna_gaels_help_page_content',
+        'dashicons-sos',
+        90
+    );
+}
+add_action('admin_menu', 'vienna_gaels_admin_help_menu');
+
+function vienna_gaels_help_page_content() {
+    ?>
+    <div class="wrap">
+        <h1>🏉 Vienna Gaels Website - Quick Help</h1>
+        
+        <div class="card" style="max-width: 800px; margin-top: 20px;">
+            <h2>Welcome to the Vienna Gaels Website Admin!</h2>
+            <p>This quick guide will help you with the most common tasks. For detailed instructions, see the full documentation.</p>
+            
+            <p style="background: #e7f5ff; padding: 15px; border-left: 4px solid #008040; margin: 20px 0;">
+                <strong>📖 Full Documentation:</strong><br>
+                <a href="https://github.com/Shane24/Vienna-Gaels-Wordpress-Theme/blob/main/DOCUMENTATION.md" target="_blank" style="font-size: 16px;">
+                    View Complete User Guide on GitHub →
+                </a>
+            </p>
+        </div>
+
+        <div class="card" style="max-width: 800px; margin-top: 20px;">
+            <h2>Most Common Tasks</h2>
+            
+            <h3>➕ Add an Event</h3>
+            <ol>
+                <li>Click <strong>Events → Add New</strong></li>
+                <li>Enter event title (e.g., "Football Training")</li>
+                <li>Fill in Event Details:
+                    <ul>
+                        <li><strong>Start Date</strong> (required)</li>
+                        <li><strong>Start Time</strong> (required)</li>
+                        <li><strong>Location</strong> (e.g., "Prater, Vienna")</li>
+                        <li><strong>Type</strong> (Training/Match/Social)</li>
+                        <li>End date/time are optional</li>
+                    </ul>
+                </li>
+                <li>Click <strong>Publish</strong></li>
+            </ol>
+
+            <h3>✏️ Edit Homepage Buttons</h3>
+            <ol>
+                <li>Go to <strong>Appearance → Customize</strong></li>
+                <li>Click <strong>"Homepage Hero"</strong> to edit main buttons</li>
+                <li>Or click <strong>"Header CTA Button"</strong> for top-right button</li>
+                <li>Change text and links</li>
+                <li>Click <strong>Publish</strong></li>
+            </ol>
+
+            <h3>📰 Publish News Article</h3>
+            <ol>
+                <li>Click <strong>Posts → Add New</strong></li>
+                <li>Write your article</li>
+                <li>Add <strong>Featured Image</strong> (right sidebar)</li>
+                <li>Select <strong>Category</strong></li>
+                <li>Click <strong>Publish</strong></li>
+            </ol>
+
+            <h3>🏉 Update Team Pages</h3>
+            <ol>
+                <li>Go to <strong>Pages → All Pages</strong></li>
+                <li>Find team page (Men's Football, Hurling, etc.)</li>
+                <li>Click <strong>Edit</strong></li>
+                <li>Update content and images</li>
+                <li>Click <strong>Update</strong></li>
+            </ol>
+
+            <h3>📋 Edit Navigation Menu</h3>
+            <ol>
+                <li>Go to <strong>Appearance → Menus</strong></li>
+                <li>Add, remove, or rearrange items</li>
+                <li>Drag items right to create dropdowns</li>
+                <li>Click <strong>Save Menu</strong></li>
+            </ol>
+        </div>
+
+        <div class="card" style="max-width: 800px; margin-top: 20px;">
+            <h2>Quick Tips</h2>
+            
+            <p><strong>💡 Can't see your changes?</strong><br>
+            Make sure you clicked <strong>Publish/Update</strong>, then hard refresh: <strong>Ctrl+Shift+R</strong> (Windows) or <strong>Cmd+Shift+R</strong> (Mac)</p>
+
+            <p><strong>💡 Made a mistake?</strong><br>
+            Items go to <strong>Trash</strong> first - you can restore them before permanent deletion.</p>
+
+            <p><strong>💡 Need to give someone access?</strong><br>
+            Go to <strong>Users → Add New</strong>. Use <strong>Editor</strong> role for committee members.</p>
+
+            <p><strong>💡 Image size recommendations:</strong></p>
+            <ul>
+                <li>Homepage hero: 1200x1500px (portrait)</li>
+                <li>Team photos: 800x1200px (portrait)</li>
+                <li>News images: 1200x800px (landscape)</li>
+                <li>Keep images under 500KB</li>
+            </ul>
+        </div>
+
+        <div class="card" style="max-width: 800px; margin-top: 20px;">
+            <h2>Need More Help?</h2>
+            
+            <p style="font-size: 16px;">
+                <strong>📖 Complete Documentation:</strong><br>
+                <a href="https://github.com/Shane24/Vienna-Gaels-Wordpress-Theme/blob/main/DOCUMENTATION.md" target="_blank">
+                    https://github.com/Shane24/Vienna-Gaels-Wordpress-Theme/blob/main/DOCUMENTATION.md
+                </a>
+            </p>
+
+            <p>The full documentation includes:</p>
+            <ul>
+                <li>Detailed step-by-step instructions</li>
+                <li>Troubleshooting section</li>
+                <li>Best practices</li>
+                <li>Security tips</li>
+                <li>Common problems and solutions</li>
+            </ul>
+
+            <p><strong>🆘 Something broken?</strong> Check the troubleshooting section in the full documentation or contact the web team.</p>
+        </div>
+
+        <div style="margin-top: 30px; padding: 15px; background: #f0f0f0; border-radius: 4px;">
+            <p style="margin: 0;"><strong>Vienna Gaels GAA Theme</strong> | Version 1.0 | <a href="https://github.com/Shane24/Vienna-Gaels-Wordpress-Theme" target="_blank">View on GitHub</a></p>
+        </div>
+    </div>
+    <?php
 }

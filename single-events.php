@@ -8,7 +8,10 @@
             $start_time = get_post_meta(get_the_ID(), '_event_start_time', true);
             $end_time = get_post_meta(get_the_ID(), '_event_end_time', true);
             $location = get_post_meta(get_the_ID(), '_event_location', true);
-            $type = get_post_meta(get_the_ID(), '_event_type', true);
+            
+            // Get event type from taxonomy
+            $event_types = get_the_terms(get_the_ID(), 'event_type');
+            $type_name = $event_types && !is_wp_error($event_types) ? $event_types[0]->name : 'Event';
             
             // Format date display
             if ($end_date && $end_date !== $start_date) {
@@ -38,7 +41,7 @@
             <div class="bg-white dark:bg-neutral-800 rounded-2xl p-8 md:p-12 soft-lift mb-10">
                 <div class="flex flex-wrap items-center gap-4 mb-6">
                     <span class="bg-primary/10 text-primary px-4 py-2 rounded-full text-xs font-bold uppercase">
-                        <?php echo esc_html($type); ?>
+                        <?php echo esc_html($type_name); ?>
                     </span>
                     <span class="text-2xl font-black text-slate-400">
                         <?php echo $date_display; ?>
@@ -82,7 +85,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-sm text-slate-500 uppercase mb-1">Type</h3>
-                            <p class="font-bold capitalize"><?php echo esc_html($type); ?></p>
+                            <p class="font-bold"><?php echo esc_html($type_name); ?></p>
                         </div>
                     </div>
                 </div>
@@ -100,7 +103,7 @@
                     </a>
                 <?php else : ?>
                     <!-- OPTION B: General link to Spond group/club -->
-                    <a href="https://spond.com/client/groups/0E12FD70802F4054BDDBDE1E450B648C" target="_blank" rel="noopener" class="w-full md:w-auto inline-block text-center bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform">
+                     <a href="https://spond.com/client/groups/0E12FD70802F4054BDDBDE1E450B648CD" target="_blank" class="w-full md:w-auto inline-block text-center bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform">
                         View on Spond
                     </a>
                     

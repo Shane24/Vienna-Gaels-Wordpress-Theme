@@ -12,15 +12,23 @@
             <button class="event-filter active px-6 py-3 rounded-full font-bold bg-primary text-white" data-filter="all">
                 All Events
             </button>
-            <button class="event-filter px-6 py-3 rounded-full font-bold bg-slate-100 dark:bg-neutral-800 hover:bg-primary hover:text-white transition-colors" data-filter="training">
-                Training
+            <?php
+            // Get all event types
+            $event_types = get_terms(array(
+                'taxonomy' => 'event_type',
+                'hide_empty' => false,
+            ));
+            
+            if ($event_types && !is_wp_error($event_types)) :
+                foreach ($event_types as $event_type) :
+            ?>
+            <button class="event-filter px-6 py-3 rounded-full font-bold bg-slate-100 dark:bg-neutral-800 hover:bg-primary hover:text-white transition-colors" data-filter="<?php echo esc_attr($event_type->slug); ?>">
+                <?php echo esc_html($event_type->name); ?>
             </button>
-            <button class="event-filter px-6 py-3 rounded-full font-bold bg-slate-100 dark:bg-neutral-800 hover:bg-primary hover:text-white transition-colors" data-filter="match">
-                Matches
-            </button>
-            <button class="event-filter px-6 py-3 rounded-full font-bold bg-slate-100 dark:bg-neutral-800 hover:bg-primary hover:text-white transition-colors" data-filter="social">
-                Social
-            </button>
+            <?php
+                endforeach;
+            endif;
+            ?>
         </div>
 
         <!-- Events Grid -->
@@ -28,26 +36,31 @@
             <?php
             if (have_posts()) :
                 while (have_posts()) : the_post();
-                    $event_date = get_post_meta(get_the_ID(), '_event_date', true);
-                    $event_time = get_post_meta(get_the_ID(), '_event_time', true);
-                    $event_location = get_post_meta(get_the_ID(), '_event_location', true);
-                    $event_type = get_post_meta(get_the_ID(), '_event_type', true);
+                    $event_data = vienna_gaels_format_event_datetime(get_the_ID());
+                    $location = get_post_meta(get_the_ID(), '_event_location', true);
                     
-                    $border_color = $event_type === 'match' ? 'border-vienna-gold' : 'border-primary';
-                    $badge_color = $event_type === 'match' ? 'bg-vienna-gold/10 text-vienna-gold' : 'bg-primary/10 text-primary';
+                    // Get event type from taxonomy
+                    $event_types = get_the_terms(get_the_ID(), 'event_type');
+                    $type_name = $event_types && !is_wp_error($event_types) ? $event_types[0]->name : 'Event';
+                    $type_slug = $event_types && !is_wp_error($event_types) ? $event_types[0]->slug : 'event';
+                    
+                    // Determine styling based on type slug (tournament gets gold, others get green)
+                    $is_tournament = (strpos(strtolower($type_slug), 'tournament') !== false);
+                    $border_color = $is_tournament ? 'border-vienna-gold' : 'border-primary';
+                    $badge_color = $is_tournament ? 'bg-vienna-gold/10 text-vienna-gold' : 'bg-primary/10 text-primary';
             ?>
-            <div class="event-card bg-white dark:bg-neutral-800 rounded-2xl p-6 soft-lift border-l-4 <?php echo $border_color; ?> hover:-translate-y-2 transition-all duration-300" data-type="<?php echo $event_type; ?>">
+            <div class="event-card bg-white dark:bg-neutral-800 rounded-2xl p-6 soft-lift border-l-4 <?php echo $border_color; ?> hover:-translate-y-2 transition-all duration-300" data-type="<?php echo esc_attr($type_slug); ?>">
                 <div class="flex justify-between items-start mb-4">
-                    <span class="<?php echo $badge_color; ?> px-3 py-1 rounded-full text-[10px] font-bold uppercase"><?php echo esc_html($event_type); ?></span>
-                    <span class="text-xs font-bold text-slate-400"><?php echo date('M d', strtotime($event_date)); ?></span>
+                    <span class="<?php echo $badge_color; ?> px-3 py-1 rounded-full text-[10px] font-bold uppercase"><?php echo esc_html($type_name); ?></span>
+                    <span class="text-xs font-bold text-slate-400"><?php echo $event_data['short_date']; ?></span>
                 </div>
                 <h3 class="text-xl font-bold mb-1">
                     <a href="<?php the_permalink(); ?>" class="hover:text-primary"><?php the_title(); ?></a>
                 </h3>
-                <p class="text-slate-500 text-sm mb-4"><?php echo date('l, H:i', strtotime($event_date . ' ' . $event_time)); ?></p>
+                <p class="text-slate-500 text-sm mb-4"><?php echo $event_data['date']; ?>, <?php echo $event_data['time']; ?></p>
                 <div class="flex items-center gap-2 text-primary font-semibold text-xs mb-4">
                     <span class="material-symbols-outlined text-sm">location_on</span>
-                    <span><?php echo esc_html($event_location); ?></span>
+                    <span><?php echo esc_html($location); ?></span>
                 </div>
                 <a href="<?php the_permalink(); ?>" class="text-primary font-bold text-sm hover:underline">View Details →</a>
             </div>
