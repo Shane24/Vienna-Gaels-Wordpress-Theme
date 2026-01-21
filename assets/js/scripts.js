@@ -102,10 +102,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const icon = this.querySelector('.material-symbols-outlined');
             
             if (submenu) {
-                // Toggle this submenu
-                const isOpen = !submenu.classList.contains('hidden');
+                const isCurrentlyOpen = !submenu.classList.contains('hidden');
                 
-                if (isOpen) {
+                // Close all other submenus first
+                document.querySelectorAll('.submenu-items').forEach(otherSubmenu => {
+                    if (otherSubmenu !== submenu) {
+                        otherSubmenu.classList.add('hidden');
+                        const otherIcon = otherSubmenu.closest('.mobile-menu-item').querySelector('.submenu-toggle .material-symbols-outlined');
+                        if (otherIcon) {
+                            otherIcon.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+                
+                // Toggle this submenu
+                if (isCurrentlyOpen) {
                     submenu.classList.add('hidden');
                     icon.style.transform = 'rotate(0deg)';
                 } else {
@@ -114,5 +125,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    });
+
+    // Prevent parent link from toggling on mobile
+    document.querySelectorAll('.mobile-menu-item a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Allow normal link behavior - don't toggle
+            e.stopPropagation();
+        });
+    });
+
+    // Desktop Dropdown Hover Intent
+    let hoverTimeout;
+    const desktopMenuItems = document.querySelectorAll('nav.hidden.lg\\:flex .relative.group');
+    
+    desktopMenuItems.forEach(item => {
+        const dropdown = item.querySelector('div[class*="absolute"]');
+        
+        if (dropdown) {
+            // Mouse enter - delay showing dropdown
+            item.addEventListener('mouseenter', function() {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = setTimeout(() => {
+                    dropdown.style.opacity = '1';
+                    dropdown.style.visibility = 'visible';
+                }, 150); // 150ms delay before showing
+            });
+            
+            // Mouse leave - immediate hide
+            item.addEventListener('mouseleave', function() {
+                clearTimeout(hoverTimeout);
+                dropdown.style.opacity = '0';
+                dropdown.style.visibility = 'hidden';
+            });
+            
+            // Keep dropdown open when hovering over it
+            dropdown.addEventListener('mouseenter', function() {
+                clearTimeout(hoverTimeout);
+                this.style.opacity = '1';
+                this.style.visibility = 'visible';
+            });
+        }
     });
 });

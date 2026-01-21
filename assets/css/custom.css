@@ -21,9 +21,33 @@
     position: relative;
 }
 
-/* Smooth dropdown animation */
-nav .group:hover > div {
-    animation: dropdownSlide 0.2s ease-out;
+/* Mobile submenu animation */
+.submenu-items {
+    transition: all 0.3s ease-in-out;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.submenu-items.hidden {
+    max-height: 0;
+}
+
+.submenu-items:not(.hidden) {
+    max-height: 500px;
+}
+
+/* Submenu toggle icon animation */
+.submenu-toggle .material-symbols-outlined {
+    transition: transform 0.3s ease;
+}
+
+/* Smooth dropdown animation for desktop */
+nav .group > div[class*="absolute"] {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+nav .group:hover > div[class*="absolute"] {
+    animation: none; /* Remove the slide animation, use opacity only */
 }
 
 @keyframes dropdownSlide {
