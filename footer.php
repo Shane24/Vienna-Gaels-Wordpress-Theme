@@ -4,9 +4,6 @@
         <div class="grid md:grid-cols-4 gap-12 mb-20">
             <div class="col-span-1 md:col-span-1">
                 <div class="flex items-center gap-3 mb-6">
-                    <div class="size-8 bg-primary rounded flex items-center justify-center text-white">
-                        <span class="material-symbols-outlined text-xl">sports_rugby</span>
-                    </div>
                     <h2 class="text-lg font-black tracking-tight"><?php bloginfo('name'); ?></h2>
                 </div>
                 <p class="text-neutral-400 text-sm leading-relaxed mb-6">
@@ -59,7 +56,7 @@
         </div>
         <div class="pt-8 border-t border-neutral-800 text-center">
             <p class="text-neutral-500 text-xs">
-                © <?php echo date('Y'); ?> <?php bloginfo('name'); ?>. All rights reserved. Registered ZVR: 479155231
+                © <?php echo date('Y'); ?> <?php bloginfo('name'); ?>. All rights reserved.
             </p>
         </div>
     </div>

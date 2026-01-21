@@ -16,6 +16,27 @@
     overflow: hidden;
 }
 
+/* Dropdown Menu Styles */
+.menu-item-has-children > a {
+    position: relative;
+}
+
+/* Smooth dropdown animation */
+nav .group:hover > div {
+    animation: dropdownSlide 0.2s ease-out;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Pagination Styles */
 .pagination {
     display: flex;

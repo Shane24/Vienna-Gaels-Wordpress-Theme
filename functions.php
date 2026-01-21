@@ -88,19 +88,32 @@ add_action('add_meta_boxes', 'vienna_gaels_event_meta_boxes');
 
 function vienna_gaels_event_details_callback($post) {
     wp_nonce_field('vienna_gaels_event_details', 'vienna_gaels_event_nonce');
-    $date = get_post_meta($post->ID, '_event_date', true);
-    $time = get_post_meta($post->ID, '_event_time', true);
+    $start_date = get_post_meta($post->ID, '_event_start_date', true);
+    $end_date = get_post_meta($post->ID, '_event_end_date', true);
+    $start_time = get_post_meta($post->ID, '_event_start_time', true);
+    $end_time = get_post_meta($post->ID, '_event_end_time', true);
     $location = get_post_meta($post->ID, '_event_location', true);
     $type = get_post_meta($post->ID, '_event_type', true);
+    $spond_url = get_post_meta($post->ID, '_spond_event_url', true);
     
-    echo '<p><label>Date: <input type="date" name="event_date" value="' . esc_attr($date) . '" /></label></p>';
-    echo '<p><label>Time: <input type="time" name="event_time" value="' . esc_attr($time) . '" /></label></p>';
-    echo '<p><label>Location: <input type="text" name="event_location" value="' . esc_attr($location) . '" style="width:100%;" /></label></p>';
-    echo '<p><label>Type: <select name="event_type">';
+    echo '<p><label><strong>Start Date:</strong> <input type="date" name="event_start_date" value="' . esc_attr($start_date) . '" required /></label></p>';
+    echo '<p><label><strong>End Date (optional):</strong> <input type="date" name="event_end_date" value="' . esc_attr($end_date) . '" /></label></p>';
+    echo '<p class="description" style="margin-top:-10px;margin-bottom:15px;">Leave empty for single-day events</p>';
+    
+    echo '<p><label><strong>Start Time:</strong> <input type="time" name="event_start_time" value="' . esc_attr($start_time) . '" required /></label></p>';
+    echo '<p><label><strong>End Time (optional):</strong> <input type="time" name="event_end_time" value="' . esc_attr($end_time) . '" /></label></p>';
+    echo '<p class="description" style="margin-top:-10px;margin-bottom:15px;">Leave empty if end time is not applicable</p>';
+    
+    echo '<p><label><strong>Location:</strong> <input type="text" name="event_location" value="' . esc_attr($location) . '" style="width:100%;" /></label></p>';
+    
+    echo '<p><label><strong>Type:</strong> <select name="event_type">';
     echo '<option value="training"' . selected($type, 'training', false) . '>Training</option>';
     echo '<option value="match"' . selected($type, 'match', false) . '>Match Day</option>';
     echo '<option value="social"' . selected($type, 'social', false) . '>Social</option>';
     echo '</select></label></p>';
+    
+    echo '<p><label><strong>Spond Event URL (optional):</strong> <input type="url" name="spond_event_url" value="' . esc_attr($spond_url) . '" style="width:100%;" placeholder="https://spond.com/..." /></label></p>';
+    echo '<p class="description">If this event has a specific Spond page, paste the link here. Leave empty to show general Spond link.</p>';
 }
 
 function vienna_gaels_save_event_details($post_id) {
@@ -110,17 +123,26 @@ function vienna_gaels_save_event_details($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
-    if (isset($_POST['event_date'])) {
-        update_post_meta($post_id, '_event_date', sanitize_text_field($_POST['event_date']));
+    if (isset($_POST['event_start_date'])) {
+        update_post_meta($post_id, '_event_start_date', sanitize_text_field($_POST['event_start_date']));
     }
-    if (isset($_POST['event_time'])) {
-        update_post_meta($post_id, '_event_time', sanitize_text_field($_POST['event_time']));
+    if (isset($_POST['event_end_date'])) {
+        update_post_meta($post_id, '_event_end_date', sanitize_text_field($_POST['event_end_date']));
+    }
+    if (isset($_POST['event_start_time'])) {
+        update_post_meta($post_id, '_event_start_time', sanitize_text_field($_POST['event_start_time']));
+    }
+    if (isset($_POST['event_end_time'])) {
+        update_post_meta($post_id, '_event_end_time', sanitize_text_field($_POST['event_end_time']));
     }
     if (isset($_POST['event_location'])) {
         update_post_meta($post_id, '_event_location', sanitize_text_field($_POST['event_location']));
     }
     if (isset($_POST['event_type'])) {
         update_post_meta($post_id, '_event_type', sanitize_text_field($_POST['event_type']));
+    }
+    if (isset($_POST['spond_event_url'])) {
+        update_post_meta($post_id, '_spond_event_url', esc_url_raw($_POST['spond_event_url']));
     }
 }
 add_action('save_post_events', 'vienna_gaels_save_event_details');
@@ -178,6 +200,116 @@ function vienna_gaels_customize_register($wp_customize) {
         'settings' => 'hero_image',
     )));
     
+    // Hero Headline
+    $wp_customize->add_setting('hero_headline', array(
+        'default' => 'Experience the Heart of Ireland in Vienna.',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('hero_headline', array(
+        'label' => __('Hero Headline', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type' => 'text',
+    ));
+    
+    // Hero Description
+    $wp_customize->add_setting('hero_description', array(
+        'default' => "Join Austria's premier Gaelic Games club. Whether you're a seasoned player or a complete beginner, there's a place for you in our community.",
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ));
+    $wp_customize->add_control('hero_description', array(
+        'label' => __('Hero Description', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type' => 'textarea',
+    ));
+    
+    // Primary Button Text
+    $wp_customize->add_setting('hero_button_primary_text', array(
+        'default' => 'Start Your Journey',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('hero_button_primary_text', array(
+        'label' => __('Primary Button Text', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type' => 'text',
+    ));
+    
+    // Primary Button URL
+    $wp_customize->add_setting('hero_button_primary_url', array(
+        'default' => '/membership',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    $wp_customize->add_control('hero_button_primary_url', array(
+        'label' => __('Primary Button URL', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type' => 'url',
+        'description' => 'Use relative URLs like /membership or full URLs like https://example.com',
+    ));
+    
+    // Secondary Button Text
+    $wp_customize->add_setting('hero_button_secondary_text', array(
+        'default' => 'View Teams',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('hero_button_secondary_text', array(
+        'label' => __('Secondary Button Text', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type' => 'text',
+    ));
+    
+    // Secondary Button URL
+    $wp_customize->add_setting('hero_button_secondary_url', array(
+        'default' => '#teams',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    $wp_customize->add_control('hero_button_secondary_url', array(
+        'label' => __('Secondary Button URL', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type' => 'url',
+        'description' => 'Use #teams to scroll to teams section, or any URL',
+    ));
+    
+    // Header CTA Button
+    $wp_customize->add_section('header_cta', array(
+        'title' => __('Header CTA Button', 'vienna-gaels'),
+        'priority' => 31,
+        'description' => 'Configure the call-to-action button in the header (visible on large screens)',
+    ));
+    
+    // Show/Hide Header Button
+    $wp_customize->add_setting('header_button_show', array(
+        'default' => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+    ));
+    $wp_customize->add_control('header_button_show', array(
+        'label' => __('Show Header Button', 'vienna-gaels'),
+        'section' => 'header_cta',
+        'type' => 'checkbox',
+        'description' => 'Check to display the button in the header',
+    ));
+    
+    // Header Button Text
+    $wp_customize->add_setting('header_button_text', array(
+        'default' => 'Join Us',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('header_button_text', array(
+        'label' => __('Button Text', 'vienna-gaels'),
+        'section' => 'header_cta',
+        'type' => 'text',
+    ));
+    
+    // Header Button URL
+    $wp_customize->add_setting('header_button_url', array(
+        'default' => '/membership',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    $wp_customize->add_control('header_button_url', array(
+        'label' => __('Button URL', 'vienna-gaels'),
+        'section' => 'header_cta',
+        'type' => 'url',
+        'description' => 'Where the button links to',
+    ));
+    
     // Social Media Links
     $wp_customize->add_section('social_links', array(
         'title' => __('Social Media Links', 'vienna-gaels'),
@@ -207,3 +339,31 @@ function vienna_gaels_excerpt_more($more) {
     return '...';
 }
 add_filter('excerpt_more', 'vienna_gaels_excerpt_more');
+
+// Helper function to format event date/time display
+function vienna_gaels_format_event_datetime($event_id) {
+    $start_date = get_post_meta($event_id, '_event_start_date', true);
+    $end_date = get_post_meta($event_id, '_event_end_date', true);
+    $start_time = get_post_meta($event_id, '_event_start_time', true);
+    $end_time = get_post_meta($event_id, '_event_end_time', true);
+    
+    // Format date
+    if ($end_date && $end_date !== $start_date) {
+        $date_str = date('l, M j', strtotime($start_date)) . ' - ' . date('M j', strtotime($end_date));
+    } else {
+        $date_str = date('l', strtotime($start_date));
+    }
+    
+    // Format time
+    if ($end_time) {
+        $time_str = date('H:i', strtotime($start_time)) . ' - ' . date('H:i', strtotime($end_time));
+    } else {
+        $time_str = date('H:i', strtotime($start_time));
+    }
+    
+    return array(
+        'date' => $date_str,
+        'time' => $time_str,
+        'short_date' => date('M d', strtotime($start_date))
+    );
+}

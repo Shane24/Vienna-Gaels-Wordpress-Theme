@@ -89,4 +89,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Mobile Submenu Toggle
+    const submenuToggles = document.querySelectorAll('.submenu-toggle');
+    submenuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const menuItem = this.closest('.mobile-menu-item');
+            const submenu = menuItem.querySelector('.submenu-items');
+            const icon = this.querySelector('.material-symbols-outlined');
+            
+            if (submenu) {
+                // Toggle this submenu
+                const isOpen = !submenu.classList.contains('hidden');
+                
+                if (isOpen) {
+                    submenu.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    submenu.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        });
+    });
 });
