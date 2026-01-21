@@ -1,0 +1,14 @@
+{
+  "name": "vienna-gaels-theme",
+  "version": "1.0.0",
+  "description": "Vienna Gaels GAA WordPress Theme",
+  "scripts": {
+    "dev": "tailwindcss -i ./src/style.css -o ./assets/css/style.css --watch",
+    "build": "tailwindcss -i ./src/style.css -o ./assets/css/style.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  },
+  "author": "Vienna Gaels",
+  "license": "GPL-2.0-or-later"
+}

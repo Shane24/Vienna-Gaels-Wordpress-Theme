@@ -15,48 +15,22 @@ add_action('after_setup_theme', 'vienna_gaels_setup');
 function vienna_gaels_scripts() {
     // Google Fonts
     wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Noto+Sans:wght@100..900&display=swap', array(), null);
-    wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap', array(), null);
+    wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/css2?family=Material+Symbols_Outlined:wght,FILL@100..700,0..1&display=swap', array(), null);
     
-    // Theme styles
-    wp_enqueue_style('vienna-gaels-style', get_stylesheet_uri(), array(), '1.0');
-    wp_enqueue_style('vienna-gaels-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), '1.0');
+    // Remove these lines - no longer needed:
+    // wp_enqueue_style('vienna-gaels-style', get_stylesheet_uri(), array(), '1.0');
+    // wp_enqueue_style('vienna-gaels-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), '1.0');
     
     // Scripts
     wp_enqueue_script('vienna-gaels-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array(), '1.0', true);
 }
 add_action('wp_enqueue_scripts', 'vienna_gaels_scripts');
 
-// Add Tailwind in head with config INLINE
-function vienna_gaels_tailwind_head() {
-    ?>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#008040",
-                        "background-light": "#fcfcfc",
-                        "background-dark": "#1a1a1a",
-                        "vienna-gold": "#DDBB5C",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-    <?php
+// Enqueue compiled Tailwind CSS
+function vienna_gaels_enqueue_tailwind() {
+    wp_enqueue_style('vienna-gaels-tailwind', get_template_directory_uri() . '/assets/css/style.css', array(), filemtime(get_template_directory() . '/assets/css/style.css'));
 }
-add_action('wp_head', 'vienna_gaels_tailwind_head', 1);
+add_action('wp_enqueue_scripts', 'vienna_gaels_enqueue_tailwind', 5);
 
 function vienna_gaels_custom_post_types() {
     // Events

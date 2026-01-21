@@ -93,6 +93,10 @@ screenshot-backup.png
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
 
+# Generated CSS (build output)
+assets/css/style.css
+assets/css/style.css.map
+
 # PHPStorm
 .idea/
 
