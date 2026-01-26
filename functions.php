@@ -602,3 +602,143 @@ function vienna_gaels_page_subtitle_callback($post) {
     <p class="description">This subtitle will appear on pages using special templates like the Membership page.</p>
     <?php
 }
+
+function vienna_gaels_save_page_subtitle($post_id) {
+    if (!isset($_POST['vienna_gaels_page_subtitle_nonce']) || 
+        !wp_verify_nonce($_POST['vienna_gaels_page_subtitle_nonce'], 'vienna_gaels_page_subtitle')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    if (isset($_POST['page_subtitle'])) {
+        update_post_meta($post_id, 'page_subtitle', sanitize_text_field($_POST['page_subtitle']));
+    }
+}
+add_action('save_post_page', 'vienna_gaels_save_page_subtitle');
+
+// ============================================
+// SPONSORS CUSTOM POST TYPE
+// ============================================
+
+// Register Sponsors Custom Post Type
+function vienna_gaels_sponsors_post_type() {
+    register_post_type('sponsors', array(
+        'labels' => array(
+            'name' => __('Sponsors', 'vienna-gaels'),
+            'singular_name' => __('Sponsor', 'vienna-gaels'),
+            'add_new' => __('Add New Sponsor', 'vienna-gaels'),
+            'add_new_item' => __('Add New Sponsor', 'vienna-gaels'),
+            'edit_item' => __('Edit Sponsor', 'vienna-gaels'),
+            'new_item' => __('New Sponsor', 'vienna-gaels'),
+            'view_item' => __('View Sponsor', 'vienna-gaels'),
+            'search_items' => __('Search Sponsors', 'vienna-gaels'),
+            'not_found' => __('No sponsors found', 'vienna-gaels'),
+            'all_items' => __('All Sponsors', 'vienna-gaels'),
+        ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-awards',
+        'supports' => array('title', 'thumbnail'),
+        'rewrite' => false,
+        'publicly_queryable' => false,
+    ));
+}
+add_action('init', 'vienna_gaels_sponsors_post_type');
+
+// Add Sponsor URL Meta Box
+function vienna_gaels_sponsor_meta_boxes() {
+    add_meta_box(
+        'sponsor_url',
+        'Sponsor Website URL',
+        'vienna_gaels_sponsor_url_callback',
+        'sponsors',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'vienna_gaels_sponsor_meta_boxes');
+
+function vienna_gaels_sponsor_url_callback($post) {
+    wp_nonce_field('vienna_gaels_sponsor_url', 'vienna_gaels_sponsor_url_nonce');
+    $url = get_post_meta($post->ID, '_sponsor_url', true);
+    $order = get_post_meta($post->ID, '_sponsor_order', true);
+    ?>
+    <p>
+        <label for="sponsor_url" style="display: block; margin-bottom: 5px; font-weight: 600;">
+            Sponsor Website URL (optional):
+        </label>
+        <input 
+            type="url" 
+            id="sponsor_url" 
+            name="sponsor_url" 
+            value="<?php echo esc_url($url); ?>" 
+            style="width: 100%; padding: 8px; font-size: 16px;"
+            placeholder="https://sponsor-website.com"
+        >
+        <span class="description">If provided, clicking the logo will open this website.</span>
+    </p>
+    
+    <p style="margin-top: 20px;">
+        <label for="sponsor_order" style="display: block; margin-bottom: 5px; font-weight: 600;">
+            Display Order:
+        </label>
+        <input 
+            type="number" 
+            id="sponsor_order" 
+            name="sponsor_order" 
+            value="<?php echo esc_attr($order ? $order : 0); ?>" 
+            style="width: 100px; padding: 8px; font-size: 16px;"
+            min="0"
+            step="1"
+        >
+        <span class="description">Lower numbers appear first (0, 1, 2, etc.)</span>
+    </p>
+    <?php
+}
+
+function vienna_gaels_save_sponsor_meta($post_id) {
+    if (!isset($_POST['vienna_gaels_sponsor_url_nonce']) || 
+        !wp_verify_nonce($_POST['vienna_gaels_sponsor_url_nonce'], 'vienna_gaels_sponsor_url')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    if (isset($_POST['sponsor_url'])) {
+        update_post_meta($post_id, '_sponsor_url', esc_url_raw($_POST['sponsor_url']));
+    }
+    
+    if (isset($_POST['sponsor_order'])) {
+        update_post_meta($post_id, '_sponsor_order', intval($_POST['sponsor_order']));
+    }
+}
+add_action('save_post_sponsors', 'vienna_gaels_save_sponsor_meta');
+
+// Set featured image labels for sponsors
+function vienna_gaels_sponsor_featured_image_labels($labels) {
+    global $post_type;
+    
+    if ($post_type === 'sponsors') {
+        $labels->featured_image = __('Sponsor Logo', 'vienna-gaels');
+        $labels->set_featured_image = __('Set sponsor logo', 'vienna-gaels');
+        $labels->remove_featured_image = __('Remove sponsor logo', 'vienna-gaels');
+        $labels->use_featured_image = __('Use as sponsor logo', 'vienna-gaels');
+    }
+    
+    return $labels;
+}
+add_filter('post_type_labels_sponsors', 'vienna_gaels_sponsor_featured_image_labels');
