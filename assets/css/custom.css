@@ -202,8 +202,8 @@ nav .group:hover > div[class*="absolute"] {
 
 /* Specific styling for definition-style lists (Day: Monday, Time: 18:00) */
 .prose p strong {
-    display: inline-block;
-    min-width: 100px;
+    /* display: inline-block;
+    min-width: 100px; */
     color: #008040;
 }
 
@@ -450,6 +450,10 @@ nav .group:hover > div[class*="absolute"] {
     padding: 1.5rem;
     margin-bottom: 1rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.faq-item a {
+    color: #0000EE;
 }
 
 .dark .faq-item {

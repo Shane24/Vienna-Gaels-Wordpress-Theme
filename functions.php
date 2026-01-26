@@ -568,3 +568,57 @@ function vienna_gaels_membership_help() {
     }
 }
 add_action('admin_notices', 'vienna_gaels_membership_help');
+
+// Add custom subtitle field for pages
+function vienna_gaels_page_subtitle_meta_box() {
+    add_meta_box(
+        'page_subtitle',
+        'Page Subtitle',
+        'vienna_gaels_page_subtitle_callback',
+        'page',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'vienna_gaels_page_subtitle_meta_box');
+
+function vienna_gaels_page_subtitle_callback($post) {
+    wp_nonce_field('vienna_gaels_page_subtitle', 'vienna_gaels_page_subtitle_nonce');
+    $subtitle = get_post_meta($post->ID, 'page_subtitle', true);
+    ?>
+    <p>
+        <label for="page_subtitle" style="display: block; margin-bottom: 5px; font-weight: 600;">
+            Enter a subtitle that will appear below the page title:
+        </label>
+        <input 
+            type="text" 
+            id="page_subtitle" 
+            name="page_subtitle" 
+            value="<?php echo esc_attr($subtitle); ?>" 
+            style="width: 100%; padding: 8px; font-size: 16px;"
+            placeholder="e.g., Become part of Austria's premier Gaelic Games community"
+        >
+    </p>
+    <p class="description">This subtitle will appear on pages using special templates like the Membership page.</p>
+    <?php
+}
+
+function vienna_gaels_save_page_subtitle($post_id) {
+    if (!isset($_POST['vienna_gaels_page_subtitle_nonce']) || 
+        !wp_verify_nonce($_POST['vienna_gaels_page_subtitle_nonce'], 'vienna_gaels_page_subtitle')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    if (isset($_POST['page_subtitle'])) {
+        update_post_meta($post_id, 'page_subtitle', sanitize_text_field($_POST['page_subtitle']));
+    }
+}
+add_action('save_post_page', 'vienna_gaels_save_page_subtitle');
