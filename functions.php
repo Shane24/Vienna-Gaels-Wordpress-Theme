@@ -522,3 +522,49 @@ function vienna_gaels_help_page_content() {
     </div>
     <?php
 }
+
+// Add admin notice with membership page instructions
+function vienna_gaels_membership_help() {
+    $screen = get_current_screen();
+    
+    if ($screen->id === 'page' && isset($_GET['post'])) {
+        $post_id = $_GET['post'];
+        $template = get_post_meta($post_id, '_wp_page_template', true);
+        
+        if ($template === 'page-membership.php') {
+            ?>
+            <div class="notice notice-info">
+                <h3>💡 Membership Page Guide</h3>
+                <p><strong>How to create membership cards:</strong></p>
+                <ol>
+                    <li>Add a <strong>Columns block</strong> (3 columns for desktop)</li>
+                    <li>In each column, add the following structure using <strong>Custom HTML block</strong>:</li>
+                </ol>
+                <pre style="background: #f5f5f5; padding: 15px; overflow-x: auto; border-radius: 4px;">&lt;div class="membership-card featured"&gt;
+    &lt;div class="icon"&gt;
+        &lt;span class="material-symbols-outlined" style="font-size: 2rem; color: #008040;"&gt;sports&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;h3&gt;Player&lt;/h3&gt;
+    &lt;div class="membership-price"&gt;
+        €100&lt;span class="period"&gt;/year&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;ul&gt;
+        &lt;li&gt;Full training access&lt;/li&gt;
+        &lt;li&gt;Match day participation&lt;/li&gt;
+        &lt;li&gt;Club jersey included&lt;/li&gt;
+        &lt;li&gt;Social events access&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;a href="/contact" class="button"&gt;Sign Up as Player&lt;/a&gt;
+&lt;/div&gt;</pre>
+                <p><strong>Card variations:</strong></p>
+                <ul>
+                    <li>Remove <code>featured</code> class for regular cards</li>
+                    <li>Add <code>gold</code> class for gold-tier styling: <code>class="membership-card gold"</code></li>
+                </ul>
+                <p><strong>Other components available:</strong> Benefits Grid, FAQ sections, Callout boxes. <a href="https://github.com/Shane24/Vienna-Gaels-Wordpress-Theme/blob/main/DOCUMENTATION.md" target="_blank">See full documentation</a></p>
+            </div>
+            <?php
+        }
+    }
+}
+add_action('admin_notices', 'vienna_gaels_membership_help');

@@ -245,3 +245,309 @@ nav .group:hover > div[class*="absolute"] {
 .prose > p:last-of-type {
     margin-bottom: 0;
 }
+
+/* ============================================
+   MEMBERSHIP PAGE CUSTOM STYLES
+   ============================================ */
+
+/* Membership pricing cards - use WordPress columns block */
+.membership-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+/* Individual membership card styling */
+.membership-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.dark .membership-card {
+    background: #262626;
+}
+
+.membership-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Featured/Primary card */
+.membership-card.featured {
+    border-color: #008040;
+    position: relative;
+}
+
+.membership-card.featured::before {
+    content: "MOST POPULAR";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #008040;
+    color: white;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* Card icon */
+.membership-card .icon {
+    width: 4rem;
+    height: 4rem;
+    background: rgba(0, 128, 64, 0.1);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Card title */
+.membership-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #0c1d14;
+}
+
+.dark .membership-card h3 {
+    color: #f8fcfa;
+}
+
+/* Price display */
+.membership-price {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #008040;
+    margin: 1rem 0;
+}
+
+.membership-price .period {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #64748b;
+}
+
+.dark .membership-price .period {
+    color: #94a3b8;
+}
+
+/* Gold tier pricing */
+.membership-card.gold .membership-price {
+    color: #DDBB5C;
+}
+
+.membership-card.gold .icon {
+    background: rgba(221, 187, 92, 0.1);
+}
+
+/* Features list inside cards */
+.membership-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.membership-card li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+.membership-card li::before {
+    content: "✓";
+    color: #008040;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.membership-card.gold li::before {
+    color: #DDBB5C;
+}
+
+/* CTA Button in cards */
+.membership-card .button {
+    display: block;
+    width: 100%;
+    background: #008040;
+    color: white;
+    text-align: center;
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: 1.5rem;
+}
+
+.membership-card .button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 128, 64, 0.3);
+}
+
+.membership-card.gold .button {
+    background: #DDBB5C;
+}
+
+/* Benefits grid - 4 columns */
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.benefit-item {
+    text-align: center;
+}
+
+.benefit-item .icon {
+    width: 5rem;
+    height: 5rem;
+    background: rgba(0, 128, 64, 0.1);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.benefit-item h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.benefit-item p {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.dark .benefit-item p {
+    color: #94a3b8;
+}
+
+/* FAQ Accordion styling */
+.faq-section {
+    max-width: 800px;
+    margin: 3rem auto;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.dark .faq-item {
+    background: #262626;
+}
+
+.faq-question {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: #0c1d14;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dark .faq-question {
+    color: #f8fcfa;
+}
+
+.faq-question::before {
+    content: "Q:";
+    color: #008040;
+    font-size: 1.25rem;
+}
+
+.faq-answer {
+    color: #64748b;
+    line-height: 1.7;
+    margin-left: 2rem;
+}
+
+.dark .faq-answer {
+    color: #94a3b8;
+}
+
+/* Section backgrounds */
+.section-gray {
+    background: #f8faf9;
+    padding: 4rem 2rem;
+    margin: 3rem -2rem;
+    border-radius: 1rem;
+}
+
+.dark .section-gray {
+    background: #1a1a1a;
+}
+
+/* Callout boxes */
+.callout {
+    background: rgba(0, 128, 64, 0.05);
+    border-left: 4px solid #008040;
+    padding: 1.5rem 2rem;
+    border-radius: 0 0.75rem 0.75rem 0;
+    margin: 2rem 0;
+}
+
+.dark .callout {
+    background: rgba(52, 211, 153, 0.1);
+    border-left-color: #34d399;
+}
+
+.callout p:last-child {
+    margin-bottom: 0;
+}
+
+/* Price comparison table */
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+}
+
+.price-table th,
+.price-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.dark .price-table th,
+.dark .price-table td {
+    border-bottom-color: #334155;
+}
+
+.price-table th {
+    background: #f8faf9;
+    font-weight: 700;
+    color: #0c1d14;
+}
+
+.dark .price-table th {
+    background: #1a1a1a;
+    color: #f8fcfa;
+}
+
+.price-table .price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #008040;
+}
