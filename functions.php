@@ -286,6 +286,28 @@ function vienna_gaels_customize_register($wp_customize) {
         'type' => 'url',
         'description' => 'Use #teams to scroll to teams section, or any URL',
     ));
+
+    // Hero Stat Badge
+    $wp_customize->add_setting('hero_stat_number', array(
+        'default' => '20+',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('hero_stat_number', array(
+        'label'   => __('Stat Badge — Number', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type'    => 'text',
+        'description' => 'e.g. 20+ — leave blank to hide the badge',
+    ));
+
+    $wp_customize->add_setting('hero_stat_label', array(
+        'default' => 'Nationalities Represented',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('hero_stat_label', array(
+        'label'   => __('Stat Badge — Label', 'vienna-gaels'),
+        'section' => 'hero_section',
+        'type'    => 'text',
+    ));
     
     // Header CTA Button
     $wp_customize->add_section('header_cta', array(

@@ -49,10 +49,16 @@
                         <div class="aspect-[4/5] bg-cover bg-center" style="background-image: url('<?php echo esc_url($hero_image); ?>');"></div>
                     </div>
                 <?php endif; ?>
+                <?php
+                $stat_number = get_theme_mod('hero_stat_number', '20+');
+                $stat_label  = get_theme_mod('hero_stat_label', 'Nationalities Represented');
+                if ($stat_number || $stat_label) :
+                ?>
                 <div class="absolute -bottom-6 -left-6 bg-vienna-gold text-white p-6 rounded-2xl soft-lift -rotate-3 z-20 hidden md:block">
-                    <p class="text-3xl font-black">20+</p>
-                    <p class="text-xs font-bold uppercase tracking-tighter">Nationalities Represented</p>
+                    <p class="text-3xl font-black"><?php echo esc_html($stat_number); ?></p>
+                    <p class="text-xs font-bold uppercase tracking-tighter"><?php echo esc_html($stat_label); ?></p>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -78,15 +84,7 @@
                 'posts_per_page' => 3,
                 'meta_key' => '_event_start_date',
                 'orderby' => 'meta_value',
-                'order' => 'ASC',
-                'meta_query' => array(
-                    array(
-                        'key'     => '_event_start_date',
-                        'value'   => date('Y-m-d'),
-                        'compare' => '>=',
-                        'type'    => 'DATE',
-                    ),
-                ),
+                'order' => 'ASC'
             ));
             
             if ($events->have_posts()) :
