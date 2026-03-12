@@ -78,7 +78,15 @@
                 'posts_per_page' => 3,
                 'meta_key' => '_event_start_date',
                 'orderby' => 'meta_value',
-                'order' => 'ASC'
+                'order' => 'ASC',
+                'meta_query' => array(
+                    array(
+                        'key'     => '_event_start_date',
+                        'value'   => date('Y-m-d'),
+                        'compare' => '>=',
+                        'type'    => 'DATE',
+                    ),
+                ),
             ));
             
             if ($events->have_posts()) :
