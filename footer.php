@@ -45,56 +45,58 @@
                 </ul>
             </div>
             <div>
-                <h4 class="font-bold mb-6 uppercase text-xs tracking-[0.2em] text-neutral-500">Our Sponsors</h4>
-                <?php
-                $sponsors = new WP_Query(array(
-                    'post_type' => 'sponsors',
-                    'posts_per_page' => -1,
-                    'orderby' => 'meta_value_num',
-                    'meta_key' => '_sponsor_order',
-                    'order' => 'ASC'
-                ));
-
-                if ($sponsors->have_posts()) :
-                ?>
-                    <div class="grid grid-cols-2 gap-6">
-                        <?php while ($sponsors->have_posts()) : $sponsors->the_post();
-                            $logo_url = get_the_post_thumbnail_url(get_the_ID(), 'medium');
-                            $sponsor_url = get_post_meta(get_the_ID(), '_sponsor_url', true);
-                            $sponsor_name = get_the_title();
-
-                            if ($logo_url) :
-                                $logo_html = '<img src="' . esc_url($logo_url) . '" alt="' . esc_attr($sponsor_name) . '" class="sponsor-logo">';
-
-                                if ($sponsor_url) :
-                        ?>
-                                    <a href="<?php echo esc_url($sponsor_url); ?>"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="sponsor-logo-container"
-                                        title="Visit <?php echo esc_attr($sponsor_name); ?>">
-                                        <?php echo $logo_html; ?>
-                                    </a>
-                                <?php
-                                else :
-                                ?>
-                                    <div class="sponsor-logo-container">
-                                        <?php echo $logo_html; ?>
-                                    </div>
-                        <?php
-                                endif;
-                            endif;
-                        endwhile;
-                        wp_reset_postdata();
-                        ?>
-                    </div>
-                <?php else : ?>
-                    <div class="grid grid-cols-2 gap-4 opacity-40">
-                        <div class="h-12 bg-neutral-800 rounded flex items-center justify-center text-[10px] font-bold">SPONSOR 1</div>
-                        <div class="h-12 bg-neutral-800 rounded flex items-center justify-center text-[10px] font-bold">SPONSOR 2</div>
-                    </div>
-                <?php endif; ?>
-            </div>
+    <h4 class="font-bold mb-6 uppercase text-xs tracking-[0.2em] text-neutral-500">Our Sponsors</h4>
+    <?php
+    $sponsors = new WP_Query(array(
+        'post_type' => 'sponsors',
+        'posts_per_page' => -1,
+        'orderby' => 'meta_value_num',
+        'meta_key' => '_sponsor_order',
+        'order' => 'ASC'
+    ));
+    
+    if ($sponsors->have_posts()) :
+    ?>
+        <div class="sponsor-grid">
+            <?php while ($sponsors->have_posts()) : $sponsors->the_post(); 
+                $logo_url = get_the_post_thumbnail_url(get_the_ID(), 'medium');
+                $sponsor_url = get_post_meta(get_the_ID(), '_sponsor_url', true);
+                $sponsor_name = get_the_title();
+                
+                if ($logo_url) :
+                    $logo_html = '<img src="' . esc_url($logo_url) . '" alt="' . esc_attr($sponsor_name) . '" class="sponsor-logo">';
+                    
+                    if ($sponsor_url) :
+            ?>
+                        <a href="<?php echo esc_url($sponsor_url); ?>" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="sponsor-logo-container"
+                           title="Visit <?php echo esc_attr($sponsor_name); ?>">
+                            <?php echo $logo_html; ?>
+                        </a>
+            <?php 
+                    else :
+            ?>
+                        <div class="sponsor-logo-container">
+                            <?php echo $logo_html; ?>
+                        </div>
+            <?php
+                    endif;
+                endif;
+            endwhile;
+            wp_reset_postdata();
+            ?>
+        </div>
+    <?php else : ?>
+        <div class="sponsor-grid">
+            <div class="sponsor-logo-container"></div>
+            <div class="sponsor-logo-container"></div>
+            <div class="sponsor-logo-container"></div>
+            <div class="sponsor-logo-container"></div>
+        </div>
+    <?php endif; ?>
+</div>
         </div>
         <div class="pt-8 border-t border-neutral-800 text-center">
             <p class="text-neutral-500 text-xs">
