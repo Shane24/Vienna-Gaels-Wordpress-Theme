@@ -9,17 +9,27 @@
                 <p class="text-neutral-400 text-sm leading-relaxed mb-6">
                     Proudly promoting Gaelic Games and Irish culture in the heart of Vienna since 2004.
                 </p>
+                <?php
+                $socials = array(
+                    'facebook'  => 'social_leaderboard',
+                    'instagram' => 'photo_camera',
+                    'twitter'   => 'alternate_email',
+                    'youtube'   => 'play_circle',
+                );
+                $social_links = array_filter(array_map(fn($k) => get_theme_mod($k . '_link'), array_keys($socials)));
+                if (!empty($social_links)) : ?>
                 <div class="flex gap-4">
-                    <a class="size-10 bg-neutral-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors" href="#">
-                        <span class="material-symbols-outlined text-sm">social_leaderboard</span>
-                    </a>
-                    <a class="size-10 bg-neutral-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors" href="#">
-                        <span class="material-symbols-outlined text-sm">photo_camera</span>
-                    </a>
-                    <a class="size-10 bg-neutral-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors" href="#">
-                        <span class="material-symbols-outlined text-sm">alternate_email</span>
-                    </a>
+                    <?php foreach ($socials as $key => $icon) :
+                        $url = get_theme_mod($key . '_link');
+                        if ($url) : ?>
+                        <a class="size-10 bg-neutral-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                           href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer"
+                           aria-label="<?php echo esc_attr(ucfirst($key)); ?>">
+                            <span class="material-symbols-outlined text-sm"><?php echo $icon; ?></span>
+                        </a>
+                    <?php endif; endforeach; ?>
                 </div>
+                <?php endif; ?>
             </div>
             <div>
                 <h4 class="font-bold mb-6 uppercase text-xs tracking-[0.2em] text-neutral-500">Quick Links</h4>
