@@ -129,6 +129,10 @@ nav .group:hover > div[class*="absolute"] {
     margin-bottom: 0.8em;
 }
 
+.prose a {
+    color: #0000EE;
+}
+
 /* Enhanced Paragraph Spacing & Readability */
 .prose p {
     margin-top: 1.5em;
