@@ -750,6 +750,65 @@ function vienna_gaels_save_sponsor_meta($post_id) {
 }
 add_action('save_post_sponsors', 'vienna_gaels_save_sponsor_meta');
 
+// ============================================
+// WOOCOMMERCE INTEGRATION
+// Everything below is skipped entirely if WooCommerce isn't active,
+// so the theme never fatals if the plugin is deactivated or missing.
+// ============================================
+
+if (class_exists('WooCommerce')) {
+
+    // Declare theme support for WooCommerce and product gallery features
+    function vienna_gaels_woocommerce_setup() {
+        add_theme_support('woocommerce');
+        add_theme_support('wc-product-gallery-zoom');
+        add_theme_support('wc-product-gallery-lightbox');
+        add_theme_support('wc-product-gallery-slider');
+    }
+    add_action('after_setup_theme', 'vienna_gaels_woocommerce_setup');
+
+    // Use our own custom stylesheet instead of WooCommerce's default frontend styles
+    add_filter('woocommerce_enqueue_styles', '__return_empty_array');
+
+    // Enqueue WooCommerce-specific styles only on shop-related pages
+    function vienna_gaels_woocommerce_scripts() {
+        if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
+            wp_enqueue_style('vienna-gaels-woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('vienna-gaels-custom'), '1.0');
+        }
+    }
+    add_action('wp_enqueue_scripts', 'vienna_gaels_woocommerce_scripts');
+
+    // Replace WooCommerce's default page wrapper with markup matching the theme's layout
+    remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
+    remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
+
+    function vienna_gaels_woocommerce_wrapper_start() {
+        echo '<main class="w-full py-20"><div class="max-w-[1100px] mx-auto px-6">';
+    }
+    add_action('woocommerce_before_main_content', 'vienna_gaels_woocommerce_wrapper_start', 10);
+
+    function vienna_gaels_woocommerce_wrapper_end() {
+        echo '</div></main>';
+    }
+    add_action('woocommerce_after_main_content', 'vienna_gaels_woocommerce_wrapper_end', 10);
+
+    // Remove the default WooCommerce sidebar (single product/shop pages use a full-width layout)
+    remove_action('woocommerce_sidebar', 'woocommerce_get_sidebar', 10);
+
+    // Single-product store: skip the /shop archive and send visitors straight to the product
+    function vienna_gaels_redirect_shop_to_product() {
+        if (is_shop() && !is_admin()) {
+            $products = wc_get_products(array('limit' => 1, 'status' => 'publish', 'orderby' => 'date', 'order' => 'ASC'));
+            if (!empty($products)) {
+                wp_safe_redirect(get_permalink($products[0]->get_id()), 301);
+                exit;
+            }
+        }
+    }
+    add_action('template_redirect', 'vienna_gaels_redirect_shop_to_product');
+
+}
+
 // Set featured image labels for sponsors
 function vienna_gaels_sponsor_featured_image_labels($labels) {
     global $post_type;
