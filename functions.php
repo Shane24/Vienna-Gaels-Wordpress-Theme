@@ -18,11 +18,11 @@ function vienna_gaels_scripts() {
     wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap', array(), null);
     
     // Theme styles
-    wp_enqueue_style('vienna-gaels-style', get_stylesheet_uri(), array(), '1.0');
-    wp_enqueue_style('vienna-gaels-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), '1.0');
-    
+    wp_enqueue_style('vienna-gaels-style', get_stylesheet_uri(), array(), filemtime(get_stylesheet_directory() . '/style.css'));
+    wp_enqueue_style('vienna-gaels-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), filemtime(get_template_directory() . '/assets/css/custom.css'));
+
     // Scripts
-    wp_enqueue_script('vienna-gaels-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array(), '1.0', true);
+    wp_enqueue_script('vienna-gaels-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array(), filemtime(get_template_directory() . '/assets/js/scripts.js'), true);
 }
 add_action('wp_enqueue_scripts', 'vienna_gaels_scripts');
 
@@ -366,6 +366,39 @@ function vienna_gaels_customize_register($wp_customize) {
             'type' => 'url',
         ));
     }
+
+    // Footer Affiliation Logo
+    $wp_customize->add_section('footer_affiliation', array(
+        'title' => __('Footer Affiliation Logo', 'vienna-gaels'),
+        'priority' => 36,
+        'description' => __('Optional logo (e.g. a governing body or affiliated organization) shown under the club description in the footer.', 'vienna-gaels'),
+    ));
+
+    $wp_customize->add_setting('footer_affiliation_logo');
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'footer_affiliation_logo', array(
+        'label' => __('Logo Image', 'vienna-gaels'),
+        'section' => 'footer_affiliation',
+        'settings' => 'footer_affiliation_logo',
+    )));
+
+    $wp_customize->add_setting('footer_affiliation_name', array(
+        'default' => 'Sport Union',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('footer_affiliation_name', array(
+        'label' => __('Organization Name (used for alt text / link title)', 'vienna-gaels'),
+        'section' => 'footer_affiliation',
+        'type' => 'text',
+    ));
+
+    $wp_customize->add_setting('footer_affiliation_url', array(
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    $wp_customize->add_control('footer_affiliation_url', array(
+        'label' => __('Link URL (optional)', 'vienna-gaels'),
+        'section' => 'footer_affiliation',
+        'type' => 'url',
+    ));
 }
 add_action('customize_register', 'vienna_gaels_customize_register');
 
@@ -773,7 +806,7 @@ if (class_exists('WooCommerce')) {
     // Enqueue WooCommerce-specific styles only on shop-related pages
     function vienna_gaels_woocommerce_scripts() {
         if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
-            wp_enqueue_style('vienna-gaels-woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('vienna-gaels-custom'), '1.0');
+            wp_enqueue_style('vienna-gaels-woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('vienna-gaels-custom'), filemtime(get_template_directory() . '/assets/css/woocommerce.css'));
         }
     }
     add_action('wp_enqueue_scripts', 'vienna_gaels_woocommerce_scripts');
@@ -794,18 +827,6 @@ if (class_exists('WooCommerce')) {
 
     // Remove the default WooCommerce sidebar (single product/shop pages use a full-width layout)
     remove_action('woocommerce_sidebar', 'woocommerce_get_sidebar', 10);
-
-    // Single-product store: skip the /shop archive and send visitors straight to the product
-    function vienna_gaels_redirect_shop_to_product() {
-        if (is_shop() && !is_admin()) {
-            $products = wc_get_products(array('limit' => 1, 'status' => 'publish', 'orderby' => 'date', 'order' => 'ASC'));
-            if (!empty($products)) {
-                wp_safe_redirect(get_permalink($products[0]->get_id()), 301);
-                exit;
-            }
-        }
-    }
-    add_action('template_redirect', 'vienna_gaels_redirect_shop_to_product');
 
 }
 

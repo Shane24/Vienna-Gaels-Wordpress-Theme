@@ -211,6 +211,45 @@ nav .group:hover > div[class*="absolute"] {
     color: #34d399;
 }
 
+/* Content links */
+.prose a {
+    color: #008040;
+    text-decoration: none;
+    text-underline-offset: 2px;
+    transition: color 0.2s;
+}
+
+.dark .prose a {
+    color: #34d399;
+}
+
+.prose a:hover {
+    color: #006633;
+    text-decoration: underline;
+}
+
+.dark .prose a:hover {
+    color: #6ee7b7;
+}
+
+.prose a:active {
+    color: #004d26;
+}
+
+.dark .prose a:active {
+    color: #34d399;
+}
+
+.prose a:focus-visible {
+    outline: 2px solid #008040;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.dark .prose a:focus-visible {
+    outline-color: #34d399;
+}
+
 /* Email links */
 .prose a[href^="mailto:"] {
     color: #008040;
@@ -453,7 +492,26 @@ nav .group:hover > div[class*="absolute"] {
 }
 
 .faq-item a {
-    color: #0000EE;
+    color: #008040;
+    text-decoration: none;
+}
+
+.dark .faq-item a {
+    color: #34d399;
+}
+
+.faq-item a:hover {
+    text-decoration: underline;
+}
+
+.faq-item a:focus-visible {
+    outline: 2px solid #008040;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.dark .faq-item a:focus-visible {
+    outline-color: #34d399;
 }
 
 .dark .faq-item {

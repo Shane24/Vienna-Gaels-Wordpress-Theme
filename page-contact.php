@@ -11,7 +11,7 @@ get_header();
         
         <div class="text-center mb-16">
             <h1 class="text-5xl font-black mb-6"><?php the_title(); ?></h1>
-            <p class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            <p class="prose text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
                 <?php the_content(); ?>
             </p>
         </div>
