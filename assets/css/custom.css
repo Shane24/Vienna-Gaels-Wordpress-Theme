@@ -705,3 +705,16 @@ footer .sponsor-grid {
     width: 100%;
     height: 100%;
 }
+
+/* Footer affiliation logo (e.g. Sport Union) - opaque white artwork on a dark footer */
+.footer-affiliation-badge {
+    display: inline-block;
+    background: #fff;
+    border-radius: 0.75rem;
+}
+
+.footer-affiliation-logo {
+    display: block;
+    max-height: 40px;
+    width: auto;
+}
